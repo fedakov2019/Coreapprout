@@ -1,7 +1,7 @@
 import { apiInstance } from "../../shared/api/api-instance"
 import { removeFromStore, saveTokenStore } from "./auth-token.service";
 type LoginType = { accesToken: string };
-type IAuthForm = {login:string, password:string }
+export type IAuthForm = {login:string, password:string }
 export const authService ={
  async getNewTokens() {
     const response= await apiInstance.post<LoginType>("/auth/sign-refrech")

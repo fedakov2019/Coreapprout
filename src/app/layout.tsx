@@ -3,7 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 
 import { cn } from "@/shared/ui/utils";
-
+import {Toaster} from 'sonner';
 
 import { AppHeader } from "@/widgets/app-header/app-header";
 import { AppProvider } from "./_providers/app-provider";
@@ -31,8 +31,13 @@ export default function RootLayout({
       >
       <AppProvider>
        
-          <AppHeader/>
+        
         {children}
+        <Toaster
+        theme='dark'  
+        position="bottom-right"
+        duration={1500}
+        />
         </AppProvider>
         
       </body>
