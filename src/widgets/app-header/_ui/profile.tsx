@@ -16,6 +16,7 @@ import { Skeleton } from "@/shared/ui/skeleton";
 
 
 import { ProfileAvatar } from "@/entities/user/profile";
+import { signOut } from "next-auth/react";
 
 export function Profile() {
   //const session = useAppSession();
@@ -53,7 +54,7 @@ export function Profile() {
           </DropdownMenuItem>
           <DropdownMenuItem
             
-            onClick={() => {}//signOut()
+            onClick={() => {signOut()}
 
             }
           >

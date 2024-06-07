@@ -20,6 +20,8 @@ import { toast } from 'sonner';
 import { DASHBOARD_PAGES } from '@/shared/const/pages-uri.config';
 import { Checkbox } from '@/shared/ui/checkbox';
 import { Ui_Button } from '@/shared/ui/button';
+import {  errorCatchax } from '@/shared/api/error';
+import { useUserSignIn } from '@/features/auth/_vm/use-user-sign-in';
 
 
 const formSchema = z.object({
@@ -42,30 +44,38 @@ export function Auth() {
     const [isLoginForm,setLoginForm]=useState(false)
     const {push}=useRouter();
     const logreg=isLoginForm? 'login':'register';
+    const userSignIn = useUserSignIn();
+  
+    const onSubmit:SubmitHandler<z.infer<typeof formSchema>>=data=>{userSignIn.signIn(data)}
+   if (!userSignIn.isPending && userSignIn.is_Status==='success') {
+  
+   
+    
+    if (!userSignIn.data)
+    {toast.success('Успешный вход!')
+    console.log('p',userSignIn.isPending);
+    console.log('s',userSignIn.is_Success);
+    console.log('err',userSignIn.data);
+   form.reset
+     push(DASHBOARD_PAGES.HOME)}
+  else
+  { toast.error("Не верное имя пользователя или пароль");
 
-    const  {mutate} = useMutation({
-        mutationKey:['auth'],
-        mutationFn: (data:IAuthForm) => authService.main(data),
-        onSuccess() {
-            toast.success('Успешный вход!')
-            form.reset()
-            push(DASHBOARD_PAGES.HOME)
-        }
-        
-    })
-    const onSubmit:SubmitHandler<z.infer<typeof formSchema>>=data=>{mutate(data)}
-
+    form.reset
+   }
+}
     return (
         <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-2">
           <FormField
             control={form.control}
+            
             name="login"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Имя</FormLabel>
                 <FormControl>
-                  <Input placeholder="login" {...field} />
+                  <Input placeholder="login" id='login' {...field}  />
                 </FormControl>
               
                 <FormMessage />
@@ -79,7 +89,7 @@ export function Auth() {
               <FormItem>
                 <FormLabel>Пароль</FormLabel>
                 <FormControl>
-                  <Input placeholder="password" type= "password" {...field} />
+                  <Input placeholder="password" id='password' type= "password" {...field} />
                 </FormControl>
               
                 <FormMessage />
@@ -106,7 +116,7 @@ export function Auth() {
             </FormItem>
           )}
         />
-          <Ui_Button type="submit">Войти</Ui_Button>
+          <Ui_Button disabled={userSignIn.isPending} className='text-white bg-teal-500 hover:bg-teal-600 disabled:opacity-50 shadow shadow-teal-500/30 ' type="submit">Войти</Ui_Button>
         </form>
       </Form>
     

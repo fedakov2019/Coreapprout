@@ -1,3 +1,4 @@
+
 import Cookies from 'js-cookie'
 export enum EnumTokens {
     'ACCESS_TOKEN'= 'accessToken',
@@ -9,10 +10,12 @@ export const getAccessToken =()=>{
 }
 const url = process.env.HOST_LOCAL;
 export const saveTokenStore =(accessToken:string)=>{
+    const date = new Date(Date.now() + 7200e3);
     Cookies.set(EnumTokens.ACCESS_TOKEN,accessToken,{
         domain:url,
         sameSite: 'Strict',
-        expires:1
+        expires: date
+        
     })
 }
 export const removeFromStore = () =>{
