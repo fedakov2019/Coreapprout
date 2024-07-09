@@ -38,6 +38,7 @@ export function Auth() {
         mode:'onChange',resolver: zodResolver(formSchema),
         defaultValues: {
           login: "",
+          password:"",
           remember:false,
         },
     });
@@ -47,21 +48,20 @@ export function Auth() {
     const userSignIn = useUserSignIn();
   
     const onSubmit:SubmitHandler<z.infer<typeof formSchema>>=data=>{userSignIn.signIn(data)}
-   if (!userSignIn.isPending && userSignIn.is_Status==='success') {
+   if (userSignIn.is_Status==='success') {
   
    
     
     if (!userSignIn.data)
     {toast.success('Успешный вход!')
-    console.log('p',userSignIn.isPending);
-    console.log('s',userSignIn.is_Success);
-    console.log('err',userSignIn.data);
-   form.reset
-     push(DASHBOARD_PAGES.HOME)}
+ 
+   //form.reset()
+     push(DASHBOARD_PAGES.HOME)
+    }
   else
   { toast.error("Не верное имя пользователя или пароль");
-
-    form.reset
+  userSignIn.is_Error();
+    form.reset()
    }
 }
     return (

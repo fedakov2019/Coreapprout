@@ -6,4 +6,5 @@ declare module "next-auth" {
     user: SessionEntity;
   }
   interface User extends UserEntity {}
+  interface JWT {User:SessionEntity;}
 }

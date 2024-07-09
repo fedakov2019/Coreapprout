@@ -1,12 +1,14 @@
 
 import {AuthOptions, Awaitable, RequestInternal, User} from 'next-auth';
 import Credentials from "next-auth/providers/credentials";
-import { z } from 'zod';
-import jwt from 'jsonwebtoken';
+
+
 import { cookies } from 'next/headers';
-import { type DecodedToken, SessionToken } from 'next-auth';
+
 
 import { authService } from '@/features/auth/auth.service';
+
+
 export const nextAuthConfig:AuthOptions={
 providers: [
     Credentials({
@@ -23,10 +25,10 @@ providers: [
         if (login && password) {
         const res=await authService.main({login,password})
    
-        
+        console.log(res!.cookies!)
         const userData = await authService.getUser(
             res!.accessToken,
-            res!.cookies!,
+            res!.cookies![0].match(/refrech-token=([^;]*)/)?.[1]!,
           );
             if (userData) {
           cookies().set('access_token', res.accessToken);
@@ -36,7 +38,7 @@ providers: [
           );
 
           return {
-            accessToken: res!.accessToken,
+            accesToken: res!.accessToken,
             
             refreshToken:
               res?.cookies![0].match(/refrech-token=([^;]*)/)?.[1]!,
@@ -55,20 +57,77 @@ session:{
     strategy:"jwt",
 },
 callbacks:{
-    async jwt({token, user}) {
+    async jwt({token, user,trigger,session}) {
        //return{accessToken: user.tokens.access}
+       console.log('sess1');
+       console.log(session);
+       
+      
         console.log(token)
-        return {...token, ...user}
+        if (token.user?.exp<Date.now()/1000+7120)
+          {console.log('токен сдох') 
+            console.log(token)
+           
+        const newTokenData = await authService.getNewTokens({accesToken:token.accessToken as string,refreshToken:token.refreshToken as string});
+        console.log('нев токен');
+        console.log(newTokenData);
+      
+        const newUserData = await authService.getUser(newTokenData.accesToken,
+          
+          newTokenData.refreshToken
+          
+        );
+        
+        console.log('новый юзер');
+        console.log(newUserData);
+
+        if (newUserData.error !== null && typeof(newUserData.error) !=='undefined') {
+          return { ...token, error: 'ErrorRefresh' };
+        }
+
+        console.log(
+          'Успешно обновили accessToken и refreshToken, когда accessToken сдох',
+        );
+
+        cookies().set(
+          'access_token',
+          newTokenData.accesToken!,
+        );
+        cookies().set('refreshToken', newTokenData.refreshToken!);
+       // updates(newTokenData.newAccessToken!, newTokenData.newRefreshToken!)
+        return {
+          accessToken: newTokenData!.accesToken,
+          
+          refreshToken: newTokenData!.refreshToken,
+          user: newUserData,
+          error: newUserData.error ? newUserData.error : null,
+        };
+      
+      
+      } else {
+        console.log('trigger');
+        console.log(trigger);
+
+        if (trigger==='update') { console.log('sess2');
+          console.log(session);
+          return {...token,...session.user,...session.accesToken,...session.refreshToken}
+         }
+         return {...token, ...user}
+      }
+
+      
+        
     },
     async session({session,token}) 
     {
+  
         if (token) {
-            const {accessToken, refreshToken, user}=token
-        
-
-       session.user.accessToken =accessToken;
+            const {accesToken, refreshToken, user}= token
+       
+      
        session.user.user=user;
-       session.user.refreshToken=refreshToken;
+       session.user.refreshToken=refreshToken as string;
+       session.user.accessToken=accesToken as string;
         return session;
     }   
     return session;
@@ -78,3 +137,5 @@ pages:{
     signIn:"/auth/sign-in"
 }
 }
+
+

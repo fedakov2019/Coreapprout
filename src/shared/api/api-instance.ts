@@ -1,7 +1,9 @@
+
 import axios, { AxiosError, AxiosRequestConfig, type CreateAxiosDefaults } from "axios";
 import { getAccessToken, removeFromStore } from "../../features/auth/auth-token.service";
 import { authService } from "../../features/auth/auth.service";
 import { errorCatch } from "./error";
+import { useAcces, useRefr } from "@/entities/user/app-session-provider";
 
 const url = process.env.REACT_APP_HOST_URL;
 
@@ -34,8 +36,11 @@ export type ErrorType<Error> = AxiosError<Error>;
 
 
 instanceretry.interceptors.request.use((config) => {
-  const accessToken= getAccessToken();  
+ // const accessToken= getAccessToken(); 
+ const accessToken=useAcces(); 
+ const refrechToken=useRefr(); 
   config.headers.Authorization = `Bearer ${accessToken}`;
+  config.headers.Cookie= refrechToken;
   return config;
 });
 
@@ -54,7 +59,7 @@ instanceretry.interceptors.response.use(
     ) {
       originalRequest._isRetry = true;
       try {
-        await authService.getNewTokens()
+        await authService.getNewTokens(refre)
         return instanceretry.request(originalRequest);
       } catch (e) {
         removeFromStore();
