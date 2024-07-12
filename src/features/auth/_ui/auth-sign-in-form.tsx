@@ -33,7 +33,7 @@ const formSchema = z.object({
       }),
     remember: z.boolean().default(false).optional(),
   })
-export function Auth() {
+export function AuthSignInfForm() {
     const form=useForm<z.infer<typeof formSchema>>({
         mode:'onChange',resolver: zodResolver(formSchema),
         defaultValues: {

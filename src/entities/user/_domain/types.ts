@@ -30,7 +30,7 @@ export type SessionEntity = {
     name?: string | null;
     image?: string | null;
   };
-  accessToken: string;
+  accesToken: string;
   refreshToken: string;
 
 };

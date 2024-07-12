@@ -59,16 +59,15 @@ session:{
 callbacks:{
     async jwt({token, user,trigger,session}) {
        //return{accessToken: user.tokens.access}
-       console.log('sess1');
-       console.log(session);
+   
        
       
         console.log(token)
-        if (token.user?.exp<Date.now()/1000+7120)
+        if (token.user?.exp<Date.now()/1000+7100)
           {console.log('токен сдох') 
             console.log(token)
            
-        const newTokenData = await authService.getNewTokens({accesToken:token.accessToken as string,refreshToken:token.refreshToken as string});
+        const newTokenData = await authService.getNewTokens({accesToken:token.accesToken as string,refreshToken:token.refreshToken as string});
         console.log('нев токен');
         console.log(newTokenData);
       
@@ -96,7 +95,7 @@ callbacks:{
         cookies().set('refreshToken', newTokenData.refreshToken!);
        // updates(newTokenData.newAccessToken!, newTokenData.newRefreshToken!)
         return {
-          accessToken: newTokenData!.accesToken,
+          accesToken: newTokenData!.accesToken,
           
           refreshToken: newTokenData!.refreshToken,
           user: newUserData,
@@ -105,8 +104,7 @@ callbacks:{
       
       
       } else {
-        console.log('trigger');
-        console.log(trigger);
+
 
         if (trigger==='update') { console.log('sess2');
           console.log(session);
@@ -127,7 +125,7 @@ callbacks:{
       
        session.user.user=user;
        session.user.refreshToken=refreshToken as string;
-       session.user.accessToken=accesToken as string;
+       session.user.accesToken=accesToken as string;
         return session;
     }   
     return session;

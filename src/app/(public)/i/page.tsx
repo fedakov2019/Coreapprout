@@ -1,5 +1,5 @@
 "use client";
-import { useRole } from "@/entities/user/app-session-provider";
+import { useRole } from "@/entities/user/use-app-session";
 import { Ui_Button } from "@/shared/ui/button";
 
 import {Button} from "@mui/material"

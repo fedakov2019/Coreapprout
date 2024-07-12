@@ -3,9 +3,10 @@ import axios, { AxiosError, AxiosRequestConfig, type CreateAxiosDefaults } from 
 import { getAccessToken, removeFromStore } from "../../features/auth/auth-token.service";
 import { authService } from "../../features/auth/auth.service";
 import { errorCatch } from "./error";
-import { useAcces, useRefr } from "@/entities/user/app-session-provider";
+import { useAcces, useRefr } from "@/entities/user/use-app-session";
+import { privateConfig } from "../config/private";
 
-const url = process.env.REACT_APP_HOST_URL;
+const url = privateConfig.REACT_APP_HOST_URL;
 
 const options:CreateAxiosDefaults = {
     baseURL: url,

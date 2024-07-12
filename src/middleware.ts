@@ -22,7 +22,7 @@ export const TOKEN_REFRESH_BUFFER_SECONDS = 300;
 export const SESSION_SECURE = process.env.NEXTAUTH_URL?.startsWith('https://');
 export const SESSION_COOKIE = 'next-auth.session-token';
  export function shouldUpdateToken(token: JWT): boolean {
-  if (token.user.exp < (Date.now()/1000 )+7180) return false; // берем 1 сек. буффером
+  if (token.user.exp < (Date.now()/1000 )+7150) return false; // берем 40 сек. буффером
   else return true;
   }
  
